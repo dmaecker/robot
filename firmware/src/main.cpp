@@ -3,6 +3,8 @@
 #include <ESPmDNS.h>
 #include <ArduinoOTA.h>
 #include "credentials.h"
+#include "logger.h"
+
 
 const char* HOSTNAME = "robot_control";
 const uint8_t LED_PIN = 2;
@@ -33,13 +35,13 @@ void setupOTA() {
   ArduinoOTA.setHostname(HOSTNAME);
   ArduinoOTA.setPassword(OTA_PASSWORD);
 
-  ArduinoOTA.onStart([]() { Serial.println("OTA start"); });
-  ArduinoOTA.onEnd([]()   { Serial.println("\nOTA end"); });
+  ArduinoOTA.onStart([]() { LOG("OTA start\n"); });
+  ArduinoOTA.onEnd([]()   { LOG("\nOTA end\n"); });
   ArduinoOTA.onProgress([](unsigned int p, unsigned int t) {
-    Serial.printf("OTA %u%%\r", (p * 100) / t);
+    LOG("OTA %u%%\r \n \n", (p * 100) / t);
   });
   ArduinoOTA.onError([](ota_error_t e) {
-    Serial.printf("OTA error %u\n", e);
+    LOG("OTA error %u\n \n", e);
   });
 
   ArduinoOTA.begin();
@@ -54,8 +56,11 @@ void setup() {
 
   setupWiFi();
 
+  logger_begin();
+  LOG("boot complete\n");
+
   if (MDNS.begin(HOSTNAME)) {
-    Serial.println("mDNS started as robot_control.local");
+    LOG("mDNS started as robot_control.local\n");
   }
 
   setupOTA();
