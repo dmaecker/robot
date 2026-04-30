@@ -1,0 +1,14 @@
+# PlatformIO
+.pio/
+firmware/platformio_local.ini
+
+# Secrets
+firmware/include/credentials.h
+
+# VSCode
+.vscode/
+
+# ROS2
+ros2_ws/build/
+ros2_ws/install/
+ros2_ws/log/
