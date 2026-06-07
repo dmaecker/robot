@@ -7,10 +7,12 @@
 
 
 const char* HOSTNAME = "robot_control";
-const uint8_t LED_PIN = 2;
+const uint8_t RGB_PIN = 38;
 
 unsigned long lastBlink = 0;
+unsigned long lastLog = 0;
 bool ledState = false;
+
 
 void setupWiFi() {
   WiFi.mode(WIFI_STA);
@@ -50,7 +52,6 @@ void setupOTA() {
 
 void setup() {
   Serial.begin(115200);
-  pinMode(LED_PIN, OUTPUT);
   delay(500);
   Serial.println("\n=== robot_control boot ===");
 
@@ -73,6 +74,6 @@ void loop() {
   if (now - lastBlink > 1000) {
     lastBlink = now;
     ledState = !ledState;
-    digitalWrite(LED_PIN, ledState);
+    neopixelWrite(RGB_PIN, 0, ledState ? 8 : 0, 0);  //
   }
 }
