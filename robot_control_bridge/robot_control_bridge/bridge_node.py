@@ -59,8 +59,12 @@ class Esp32Bridge(Node):
                 m.data = list(c)
                 self.pub_enc.publish(m)
             if len(data) >= 1 and data[0] == 0x03:
-                self.esp32_ip = addr[0] 
-                self.get_logger().info(f'found esp32 at {self.esp32_ip}')
+                if self.esp32_ip != addr[0]:
+                    self.esp32_ip = addr[0] 
+                    self.get_logger().info(f'found esp32 at {self.esp32_ip}')
+                ack = struct.pack('<Bhhh', PKT_CMD, 0, 0, 0)
+                self.sock.sendto(ack, (addr[0], ESP32_PORT))
+                continue
 
     @staticmethod
     def clamp(v):
