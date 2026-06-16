@@ -1,5 +1,6 @@
 #include "motors.h"
 #include "config.h"
+#include "kinematics.h"
 
 // Init direction pins and PWM channels, leave all motors stopped
 void setupMotors() {
@@ -61,4 +62,36 @@ void motorsStop() {
   ledcWrite(M2_CH, 0);
   ledcWrite(M3_CH, 0);
   ledcWrite(M4_CH, 0);
+}
+
+// Drive a single motor by signed speed (-255..255); sign sets direction.
+void setMotor(uint8_t idx, int16_t speed) {
+  if (speed >  255) speed =  255;
+  if (speed < -255) speed = -255;
+
+  bool    fwd  = (speed >= 0);
+  uint8_t duty = (uint8_t)abs(speed);
+
+  switch (idx) {
+    case 0: motorM1(fwd, duty); break;
+    case 1: motorM2(fwd, duty); break;
+    case 2: motorM3(fwd, duty); break;
+    case 3: motorM4(fwd, duty); break;
+  }
+}
+
+// Mix a drive command through the mecanum kinematics and apply it.
+void driveRobot(int vx, int vy, int omega) {
+  WheelSpeeds w = mecanumMix(vx, vy, omega);
+
+  for (int i = 0; i < 4; i++) {
+    // Scale normalized -100..100 to PWM duty -255..255
+    int duty = (int)w.m[i] * 255 / 100;
+
+    // Floor nonzero commands to the stiction-break threshold
+    if (duty > 0 && duty <  MIN_MOVE_DUTY) duty =  MIN_MOVE_DUTY;
+    if (duty < 0 && duty > -MIN_MOVE_DUTY) duty = -MIN_MOVE_DUTY;
+
+    setMotor(i, (int16_t)duty);
+  }
 }

@@ -32,6 +32,14 @@ inline constexpr uint8_t R_PWMB = 1;   // M4
 inline constexpr uint8_t R_BIN1 = 42;
 inline constexpr uint8_t R_BIN2 = 2;
 
+// === Drive / Web control ===
+// Min PWM duty applied to a wheel with a nonzero command (overcome stiction).
+inline constexpr int MIN_MOVE_DUTY = 60;
+// Motors are stopped if no command packet arrives within this window (ms).
+inline constexpr unsigned long FAILSAFE_TIMEOUT_MS = 400;
+// How often the loop pushes the current command to the motors (ms).
+inline constexpr unsigned long DRIVE_UPDATE_MS = 20;
+
 // === Encoders ===
 struct EncoderPins { uint8_t a; uint8_t b; const char* name; };
 inline constexpr EncoderPins ENCODERS[4] = {

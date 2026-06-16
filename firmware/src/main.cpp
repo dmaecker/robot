@@ -7,6 +7,7 @@
 #include "motors.h"
 #include "encoders.h"
 #include "netservices.h"
+#include "webcontrol.h"
 
 unsigned long lastBlink = 0;
 unsigned long lastLog = 0;
@@ -34,13 +35,15 @@ void setup() {
   setupMotors();
   LOG("motors ready\n");
 
+  setupWebControl();
+
   // startup spin for testing
   LOG("startup spin 1s\n");
   motorM1(true, START_DUTY);
   motorM2(true, START_DUTY);
   motorM3(true, START_DUTY);
   motorM4(true, START_DUTY);
-  delay(1000);
+  delay(200);
   motorsStop();
   LOG("startup spin done\n");
 }
@@ -48,6 +51,7 @@ void setup() {
 // Service OTA, blink LED and log encoder counts once per second
 void loop() {
   ArduinoOTA.handle();
+  webControlLoop();
 
   unsigned long now = millis();
 
