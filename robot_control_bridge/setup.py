@@ -24,6 +24,7 @@ setup(
     },
     entry_points={
         'console_scripts': [
+            'bridge = robot_control.bridge_node:main',
         ],
     },
 )
